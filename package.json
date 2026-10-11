@@ -1,0 +1,8 @@
+{
+  "name": "meal",
+  "private": true,
+  "version": "0.1.0",
+  "description": "MEAL. Log what you eat by typing, scanning a barcode, or photographing the plate.",
+  "scripts": { "dev": "node dev.js" },
+  "dependencies": { "@anthropic-ai/sdk": "^0.80.0" }
+}

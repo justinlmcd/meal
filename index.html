@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MEAL">
+<meta name="theme-color" content="#0b090f">
+<title>MEAL · Your food</title>
+<style>
+:root{color-scheme:dark;--bg:#0b090f;--ink:#f1eef8;--muted:#b0a5bd;--line:#27202f;--mint:#c9a7ff;--accent:#c9a7ff;--error:#ffae9f;--good:#9be39f;--sans:Inter,"Helvetica Neue",Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+--c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#008300;--c7:#9085e9;--c8:#e66767}
+html{-webkit-text-size-adjust:100%}*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}button,a,input,select,summary{outline-offset:5px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--mint)}
+button{cursor:pointer;color:inherit;transition:color .15s,border-color .15s,background .15s}button:disabled{cursor:default;opacity:.5}a{color:var(--mint)}
+input,select{border-radius:6px;background:#110d16;color:var(--ink);border:1px solid var(--line);padding:12px;width:100%;min-width:0}
+input::placeholder{color:#8f869f}input:focus,select:focus{border-color:var(--mint)}
+.quiet-button{border:1px solid #35293f;border-radius:6px;padding:8px 14px;background:transparent;font-size:13px;font-weight:550}.quiet-button:hover{border-color:var(--mint);color:var(--mint)}
+.text-button{border:0;background:transparent;padding:7px 0;color:var(--muted);font-size:13px}.text-button:hover{color:var(--mint)}
+.status{font-size:12px;color:var(--muted)}.status.connected:before{content:"";display:inline-block;width:5px;height:5px;background:var(--mint);border-radius:50%;margin-right:8px}
+.workspace{min-height:100dvh;padding-left:224px;position:relative;isolation:isolate}
+.workspace:before{content:"";position:absolute;inset:0 0 0 224px;z-index:-1;background:radial-gradient(ellipse 70% 52% at 56% 16%,#8e5ad614,transparent 72%);pointer-events:none}
+.sidebar{position:fixed;inset:0 auto 0 0;width:224px;padding:calc(26px + env(safe-area-inset-top)) 24px 26px max(24px,env(safe-area-inset-left));background:linear-gradient(165deg,#1a102470,transparent 55%);border-right:1px solid #2d2238;z-index:2}
+.brand{font-size:35px;font-weight:800;letter-spacing:-.08em}.brand span{color:var(--mint)}
+.nav-label{margin:57px 0 18px;font:11px var(--mono);letter-spacing:.15em;color:var(--muted)}
+.area-link{display:grid;gap:6px;text-decoration:none;padding:14px 12px;margin:0 -12px 6px;border-radius:6px;color:var(--ink)}
+.area-link[aria-current]{background:linear-gradient(110deg,#c9a7ff13,transparent)}
+.area-name{font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:9px}.area-name svg{width:15px;height:20px;color:var(--mint);flex:none}
+.area-link strong{font-size:28px;font-weight:550;letter-spacing:-.06em;line-height:1.05;overflow-wrap:anywhere}
+.index-meta{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);padding:12px 0 0}.index-meta span:last-child{color:var(--ink)}
+.wrap{max-width:1360px;margin:auto;padding:0 max(44px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(44px,env(safe-area-inset-left))}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 0}.overview-label{font-size:13px;color:var(--muted)}.header-right{display:flex;align-items:center;gap:18px}
+.quote{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:18px 20px;margin:4px 0 6px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(110deg,#c9a7ff10,transparent 70%)}
+.quote-mark{font-size:34px;line-height:.8;color:var(--mint);font-weight:500;font-family:Georgia,"Times New Roman",serif;margin-top:4px}.quote-body{min-width:0}
+.quote-label{font:11px var(--mono);letter-spacing:.17em;color:var(--mint);text-transform:uppercase;margin:0 0 6px}
+.quote-text{font-size:clamp(15px,1.5vw,18px);line-height:1.5;letter-spacing:-.01em;margin:0;overflow-wrap:anywhere}.quote-author{font-size:12px;color:var(--muted);margin:6px 0 0}
+.hero{padding:31px 0 0}.hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:24px}
+h1{font-size:clamp(64px,7.5vw,100px);font-weight:500;line-height:1;letter-spacing:-.07em;margin:10px 0 0}
+.latest-block{text-align:right;min-width:0}.point-metric{font-size:14px;color:var(--muted);margin:0 0 5px}
+.latest{display:flex;align-items:baseline;justify-content:flex-end;gap:9px}.latest strong{font-size:clamp(46px,6vw,78px);font-weight:500;line-height:1.07;letter-spacing:-.06em}
+.latest-time{font-size:12px;color:var(--muted);margin:8px 0 0}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:10px 0 28px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:#0f0c14}
+.tile p{margin:0;font-size:12px;color:var(--muted)}.tile strong{display:block;font-size:26px;font-weight:500;letter-spacing:-.04em;margin-top:6px;overflow-wrap:anywhere}
+.tile small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.range-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;flex-wrap:wrap}
+.range-row .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:7px 14px;font-size:13px;color:var(--muted)}.seg button[aria-pressed=true]{background:#c9a7ff1a;color:var(--ink)}
+.charts{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:10px}
+.chart-card{border:1px solid var(--line);border-radius:10px;padding:18px 20px 14px;background:#0f0c14;min-width:0;position:relative}
+.chart-card h2{font-size:15px;font-weight:550;letter-spacing:-.02em;margin:0 0 2px}.chart-card .sub{font-size:12px;color:var(--muted);margin:0 0 14px}
+.plot{width:100%;height:260px;display:block;overflow:visible;touch-action:pan-y}.plot text{font:11px var(--mono);fill:var(--muted)}
+.plot .hit{fill:transparent}.plot .grid{stroke:#2a1f36;stroke-dasharray:2 7}.plot .axis{stroke:#332639}
+.tip{position:absolute;pointer-events:none;background:#14101a;border:1px solid #3a2a47;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.4;box-shadow:0 10px 40px #0008;white-space:nowrap;transform:translate(-50%,calc(-100% - 12px))}
+.tip strong{display:block;font-size:14px;letter-spacing:-.02em}.tip.hidden{display:none}
+.donut-wrap{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}
+.donut{width:150px;height:150px}.donut-center{font-size:20px;font-weight:500;letter-spacing:-.04em;fill:var(--ink);font-family:var(--sans)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:12px}.legend li{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;color:var(--muted)}
+.legend i{width:10px;height:10px;border-radius:2px;display:block}.legend b{color:var(--ink);font-weight:500}.legend li.dim{opacity:.4}
+.chart-empty{min-height:200px;display:grid;place-content:center;text-align:center;color:var(--muted);font-size:14px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 0 14px;border-top:1px solid var(--line);margin-top:22px}
+.section-head h2{font-size:17px;font-weight:500;letter-spacing:-.025em;margin:0}.section-head .left{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}.section-head span{font-size:12px;color:var(--muted)}
+.rows{display:grid;gap:0}.row{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid #241c2c;min-width:0}
+.row .dot{width:8px;height:8px;border-radius:50%}.row .who{min-width:0}.row .who b{font-weight:550;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who small{color:var(--muted);font-size:12px}.row .amt{font-size:17px;letter-spacing:-.03em;font-weight:500}
+.row .ops{display:flex;gap:10px}.row .ops button{font-size:12px;padding:4px 0}.row .ops button:hover{color:var(--error)}
+.row-empty{font-size:14px;color:var(--muted);margin:0;padding:7px 0 22px}
+.subs-total{font-size:12px;color:var(--muted)}.subs-total b{color:var(--ink);font-weight:500}
+.due{color:var(--mint)}.overdue{color:var(--error)}
+.footer{display:flex;justify-content:space-between;gap:18px;color:var(--muted);font-size:11px;padding:22px 0 30px;margin-top:12px}.footer a{color:var(--muted);text-decoration:none}
+dialog{color:var(--ink);background:#14101a;border:1px solid #3a2a47;border-radius:12px;width:min(470px,calc(100% - 28px));padding:28px;max-height:calc(100dvh - 36px);overflow:auto;box-shadow:0 30px 140px #0009}
+dialog::backdrop{background:#040206b8;backdrop-filter:blur(6px)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:18px}.modal-head h2{font-size:27px;letter-spacing:-.04em;font-weight:550;margin:0}
+.close{border:0;background:transparent;color:var(--muted);font-size:26px;padding:0 6px}.modal-copy{color:var(--muted);font-size:14px;margin:8px 0 24px}
+.field{display:block;min-width:0}.field>span{display:block;margin:0 0 8px;color:#d9d1e2;font-size:13px;font-weight:550}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:16px;min-width:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-size:34px;height:66px;letter-spacing:-.04em}
+.primary{border:1px solid var(--mint);border-radius:6px;background:var(--mint);color:#1d0a35;font-weight:650;padding:13px 18px;width:100%;margin-top:2px}.primary:hover{background:#dcc6ff}
+.message{font-size:13px;margin:10px 0 0;color:var(--muted);overflow-wrap:anywhere}.message:empty{display:none}.message.error{color:var(--error)}.message.success{color:var(--mint)}
+noscript{display:block;padding:20px;color:var(--error)}
+@media(max-width:1000px){.workspace{padding-left:195px}.sidebar{width:195px;padding-left:20px;padding-right:20px}.wrap{padding-left:28px;padding-right:28px}.workspace:before{left:195px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
+@media(max-width:760px){.workspace{padding-left:0}.workspace:before{left:0}.sidebar{position:static;width:100%;padding:calc(18px + env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) 18px max(24px,env(safe-area-inset-left));display:flex;align-items:center;gap:28px;border-right:0;border-bottom:1px solid #2d2238}.brand{font-size:29px}.nav-label,.sidebar nav{display:none}.wrap{padding:0 24px 25px}header{padding:16px 0}.hero{padding-top:12px}.hero-top{gap:18px}.latest strong{font-size:54px}}
+@media(max-width:520px){.wrap{padding:0 20px 25px}.header-right{gap:12px}.status{display:none}.hero-top{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}.latest-block{text-align:left}.latest{justify-content:flex-start}h1{font-size:62px}.latest strong{font-size:44px}.section-head{flex-wrap:wrap}.section-head .text-button{white-space:nowrap}.latest-time{font-size:11px}.tiles{gap:8px}.tile{padding:12px 14px}.tile strong{font-size:22px}.quote{padding:14px 16px;gap:12px}.quote-mark{font-size:28px}.donut-wrap{grid-template-columns:120px 1fr;gap:12px}.donut{width:120px;height:120px}.plot{height:220px}.row{grid-template-columns:auto 1fr auto;gap:10px}.row .ops{grid-column:2/-1;justify-content:flex-end}.two{grid-template-columns:1fr}dialog{padding:23px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.macros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 28px}
+.macro{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:#0f0c14}.macro p{margin:0;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}.macro strong{display:block;font-size:22px;font-weight:500;letter-spacing:-.04em;margin:4px 0 8px}.macro strong span{font-size:12px;color:var(--muted);letter-spacing:0;font-weight:400}
+.bar{height:5px;border-radius:3px;background:#241c2c;overflow:hidden}.bar i{display:block;height:100%;border-radius:3px;transition:width .3s}
+.cal-bar{height:8px;border-radius:4px;background:#241c2c;overflow:hidden;margin:14px 0 0}.cal-bar i{display:block;height:100%;background:var(--mint);border-radius:4px}.cal-bar i.over{background:var(--error)}
+.hero-top .latest-block{min-width:280px}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}.add-row .quiet-button{display:inline-flex;align-items:center;gap:8px}.add-row svg{width:16px;height:16px}
+.day-nav{display:flex;align-items:center;gap:10px}.day-nav button{border:1px solid var(--line);background:transparent;border-radius:6px;width:34px;height:34px;font-size:16px;color:var(--muted)}.day-nav button:hover{color:var(--mint);border-color:var(--mint)}.day-nav strong{font-weight:550;font-size:14px;min-width:120px;text-align:center}
+.slot{margin-top:6px}.slot-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 0 4px;font-size:13px;font-weight:550}.slot-head span{font-size:12px;color:var(--muted);font-weight:400}.slot-head button{font-size:12px;padding:0}
+.row .macro-line{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.src{font:10px var(--mono);letter-spacing:.1em;color:var(--mint);margin-left:8px;text-transform:uppercase}
+.scan-box{position:relative;background:#000;border-radius:8px;overflow:hidden;aspect-ratio:4/3}.scan-box video{width:100%;height:100%;object-fit:cover;display:block}.scan-box:after{content:"";position:absolute;inset:28% 12%;border:2px solid #c9a7ffaa;border-radius:8px;pointer-events:none}
+.scan-or{display:flex;gap:10px;align-items:center;margin-top:14px}.scan-or input{flex:1}.scan-or button{white-space:nowrap}
+.photo-preview{display:block;width:100%;max-height:260px;object-fit:contain;border-radius:8px;background:#000}
+.found{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:14px;background:#0f0c14}.found b{display:block;font-weight:550}.found small{color:var(--muted);font-size:12px}
+.items{display:grid;gap:8px;margin-top:14px}.item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px}.item b{font-weight:550;font-size:14px}.item small{display:block;color:var(--muted);font-size:11px;font-family:var(--mono)}.item .conf{font:10px var(--mono);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}.item input[type=checkbox]{width:18px;height:18px;accent-color:#c9a7ff}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #c9a7ff55;border-top-color:#c9a7ff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}
+.qty-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.four input{padding:10px 8px;text-align:center}.four .field>span{font-size:11px;text-align:center}
+.search-list{display:grid;gap:6px;max-height:220px;overflow:auto;margin-top:10px}.search-list button{text-align:left;border:1px solid var(--line);border-radius:8px;background:transparent;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:10px}.search-list button:hover{border-color:var(--mint)}.search-list b{font-weight:550;font-size:14px}.search-list small{display:block;color:var(--muted);font-size:11px}
+@media(max-width:520px){.macros{gap:8px}.macro{padding:12px}.macro p{flex-direction:column;gap:2px}.macro p span{font-size:11px}.macro strong{font-size:19px;margin-top:6px}.four{grid-template-columns:repeat(2,1fr)}.hero-top .latest-block{min-width:0;width:100%}}
+</style>
+</head>
+<body>
+<noscript>This page needs JavaScript to connect to your database.</noscript>
+<div class="workspace">
+<aside class="sidebar" aria-label="Your food"><div class="brand" aria-label="MEAL">MEAL<span>.</span></div><p class="nav-label">YOUR FOOD</p><nav aria-label="Summary">
+<a class="area-link" href="#meal" aria-current="page"><span class="area-name"><svg viewBox="0 0 20 26" fill="none" aria-hidden="true"><path d="M5 3v8M8 3v8M5 7h3M6.5 11v12M14 3c-2 2-2 6 0 8v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Today</span><strong id="side-today">—</strong></a>
+<a class="area-link" href="#diary"><span class="area-name"><svg viewBox="0 0 20 26" fill="none" aria-hidden="true"><circle cx="10" cy="13" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Goal</span><strong id="side-goal">—</strong></a>
+</nav></aside>
+<div class="wrap">
+<header><span class="overview-label">Your overview</span><div class="header-right"><span class="status" id="connection-status">Your record</span><button class="quiet-button" id="connect-open" type="button">Sign in ↗</button><button class="quiet-button" id="add-open" type="button" hidden>Add food +</button><button class="text-button" id="sign-out" type="button" hidden>Sign out</button></div></header>
+<main>
+<aside class="quote" id="quote" aria-label="Quote of the day"><span class="quote-mark" aria-hidden="true">“</span><div class="quote-body"><p class="quote-label">Quote of the day</p><p class="quote-text" id="quote-text"></p><p class="quote-author" id="quote-author"></p></div></aside>
+<section class="hero" id="meal" aria-label="Food overview">
+<div class="hero-top"><div><h1>MEAL.</h1></div><div class="latest-block"><p class="point-metric" id="cal-label">Eaten today</p><div class="latest"><strong id="cal-total">—</strong><span id="cal-goal"></span></div><p class="latest-time" id="cal-note">Your first meal starts here.</p><div class="cal-bar"><i id="cal-fill" style="width:0"></i></div></div></div>
+<div class="macros">
+<div class="macro"><p>Protein <span id="p-goal"></span></p><strong id="p-total">—<span> g</span></strong><div class="bar"><i id="p-fill" style="width:0;background:#3987e5"></i></div></div>
+<div class="macro"><p>Carbs <span id="c-goal"></span></p><strong id="c-total">—<span> g</span></strong><div class="bar"><i id="c-fill" style="width:0;background:#d95926"></i></div></div>
+<div class="macro"><p>Fat <span id="f-goal"></span></p><strong id="f-total">—<span> g</span></strong><div class="bar"><i id="f-fill" style="width:0;background:#199e70"></i></div></div>
+</div>
+<div class="add-row" id="add-row" hidden>
+<button class="quiet-button" id="photo-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>Photo a meal</button>
+<button class="quiet-button" id="scan-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M7 8v8M10 8v8M13 8v8M17 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Scan barcode</button>
+<button class="quiet-button" id="manual-open" type="button">Type it in</button>
+<button class="text-button" id="goals-open" type="button">Edit goals</button>
+</div>
+<div class="range-row"><span class="overview-label">Showing</span><div class="seg" role="group" aria-label="Date range"><button type="button" data-range="7" aria-pressed="true">7 days</button><button type="button" data-range="30" aria-pressed="false">30 days</button><button type="button" data-range="90" aria-pressed="false">90 days</button></div></div>
+<div class="charts">
+<div class="chart-card" id="line-card"><h2>Calories per day</h2><p class="sub" id="line-sub">Eaten each day against your goal</p><svg id="line-plot" class="plot" viewBox="0 0 700 260" role="img" aria-label="Calories per day"></svg><div class="chart-empty" id="line-empty" hidden>Log a meal to draw your line.</div><div class="tip hidden" id="line-tip"></div></div>
+<div class="chart-card" id="pie-card"><h2>Macros</h2><p class="sub" id="pie-sub">Calories from protein, carbs and fat</p><div class="donut-wrap" id="donut-wrap"><svg id="donut" class="donut" viewBox="0 0 150 150" role="img" aria-label="Macro split"></svg><ul class="legend" id="legend"></ul></div><div class="chart-empty" id="pie-empty" hidden>Nothing logged in this range.</div><div class="tip hidden" id="pie-tip"></div></div>
+</div>
+</section>
+<section id="diary" aria-label="Food diary"><div class="section-head"><div class="left"><h2>Diary</h2><span id="diary-count"></span></div><div class="day-nav"><button type="button" id="day-prev" aria-label="Previous day">‹</button><strong id="day-label">Today</strong><button type="button" id="day-next" aria-label="Next day">›</button></div></div><div id="diary-list"><p class="row-empty">Sign in to see your diary.</p></div><p class="message" id="history-message" role="status" aria-live="polite"></p></section>
+<section id="saved" aria-label="Saved foods"><div class="section-head"><div class="left"><h2>Saved foods</h2><span id="foods-count"></span></div></div><div class="rows" id="foods-list"><p class="row-empty">Sign in to see your saved foods.</p></div></section>
+<footer class="footer"><span>MEAL · your food, in your database · barcodes from Open Food Facts</span><a href="https://github.com/justinlmcd/meal">Source ↗</a></footer>
+</main>
+</div>
+</div>
+
+<dialog id="entry-dialog" aria-labelledby="entry-title"><div class="modal-head"><h2 id="entry-title">Add food.</h2><button class="close" id="entry-close" type="button" aria-label="Close">×</button></div><form id="entry-form"><fieldset id="entry-fields" disabled>
+<label class="field"><span>Search your saved foods</span><input id="entry-search" type="search" placeholder="Start typing…" autocomplete="off"></label><div class="search-list" id="entry-results" hidden></div>
+<label class="field"><span>Name</span><input id="entry-name" type="text" placeholder="Chicken breast" maxlength="120" required autocomplete="off"></label>
+<div class="qty-row"><label class="field"><span>Portion</span><input id="entry-portion" type="text" placeholder="150 g" maxlength="60" autocomplete="off"></label><label class="field"><span>Meal</span><select id="entry-slot"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label></div>
+<div class="four"><label class="field"><span>Calories</span><input id="entry-cal" type="text" inputmode="decimal" required></label><label class="field"><span>Protein g</span><input id="entry-p" type="text" inputmode="decimal" value="0"></label><label class="field"><span>Carbs g</span><input id="entry-c" type="text" inputmode="decimal" value="0"></label><label class="field"><span>Fat g</span><input id="entry-f" type="text" inputmode="decimal" value="0"></label></div>
+<label class="field"><span>Date</span><input id="entry-date" type="date" required></label>
+<label class="field" style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--muted)"><input id="entry-save-food" type="checkbox" style="width:18px;height:18px;accent-color:#c9a7ff">Save to my foods for next time</label>
+<input type="hidden" id="entry-id"><input type="hidden" id="entry-source" value="manual"><input type="hidden" id="entry-barcode"><input type="hidden" id="entry-brand"><button class="primary" id="entry-save" type="submit">Log it ↗</button></fieldset><p class="message" id="entry-message" role="status"></p></form></dialog>
+
+<dialog id="scan-dialog" aria-labelledby="scan-title"><div class="modal-head"><h2 id="scan-title">Scan barcode.</h2><button class="close" id="scan-close" type="button" aria-label="Close">×</button></div><p class="modal-copy">Point the camera at the barcode. Looked up on Open Food Facts.</p><div class="scan-box"><video id="scan-video" playsinline muted autoplay></video></div><div class="scan-or"><input id="scan-code" type="text" inputmode="numeric" placeholder="or type the number" autocomplete="off"><button class="quiet-button" id="scan-lookup" type="button">Look up</button></div><p class="message" id="scan-message" role="status"></p><div class="found" id="scan-found" hidden></div></dialog>
+
+<dialog id="photo-dialog" aria-labelledby="photo-title"><div class="modal-head"><h2 id="photo-title">Photo a meal.</h2><button class="close" id="photo-close" type="button" aria-label="Close">×</button></div><p class="modal-copy">Take a picture of the plate. The AI names each food and estimates calories and macros. Check the numbers before you log.</p><form id="photo-form"><fieldset id="photo-fields">
+<label class="field"><span>Photo</span><input id="photo-file" type="file" accept="image/*" capture="environment"></label><img id="photo-preview" class="photo-preview" alt="Your meal" hidden>
+<label class="field" style="margin-top:14px"><span>Anything to add? (optional)</span><input id="photo-hint" type="text" placeholder="e.g. large portion, no dressing" maxlength="200" autocomplete="off"></label>
+<button class="primary" id="photo-analyze" type="submit" style="margin-top:14px">Analyze ↗</button></fieldset><p class="message" id="photo-message" role="status"></p></form>
+<div id="photo-results" hidden><div class="items" id="photo-items"></div><p class="file-note" id="photo-notes" style="font-size:12px;color:var(--muted);margin:10px 0 0"></p><div class="qty-row" style="margin-top:14px"><label class="field"><span>Meal</span><select id="photo-slot"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label><label class="field"><span>Date</span><input id="photo-date" type="date"></label></div><button class="primary" id="photo-log" type="button" style="margin-top:14px">Log selected ↗</button><p class="message" id="photo-log-message" role="status"></p></div></dialog>
+
+<dialog id="goals-dialog" aria-labelledby="goals-title"><div class="modal-head"><h2 id="goals-title">Daily goals.</h2><button class="close" id="goals-close" type="button" aria-label="Close">×</button></div><p class="modal-copy">What you're aiming for each day.</p><form id="goals-form"><fieldset id="goals-fields" disabled>
+<label class="field"><span>Calories</span><input id="goal-cal" class="big" type="text" inputmode="numeric" required></label>
+<div class="four" style="grid-template-columns:repeat(3,1fr)"><label class="field"><span>Protein g</span><input id="goal-p" type="text" inputmode="numeric" required></label><label class="field"><span>Carbs g</span><input id="goal-c" type="text" inputmode="numeric" required></label><label class="field"><span>Fat g</span><input id="goal-f" type="text" inputmode="numeric" required></label></div>
+<button class="primary" id="goals-save" type="submit">Save goals ↗</button></fieldset><p class="message" id="goals-message" role="status"></p></form></dialog>
+
+<dialog id="connection-dialog" aria-labelledby="connect-title"><div class="modal-head"><h2 id="connect-title">Sign in.</h2><button class="close" id="connect-close" type="button" aria-label="Close sign-in">×</button></div><p class="modal-copy">Your food, in your database.</p>
+<form id="connect-form"><label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" required></label><label class="field" style="margin-top:16px"><span>Password</span><input id="password" type="password" autocomplete="current-password" required></label><button class="primary" id="connect-submit" type="submit" style="margin-top:16px">Sign in ↗</button><p class="message" id="connect-message" role="status"></p></form></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="/quote-of-day.js"></script>
+<script src="/meal.js"></script>
+</body>
+</html>
