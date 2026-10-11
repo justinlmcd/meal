@@ -90,7 +90,7 @@ noscript{display:block;padding:20px;color:var(--error)}
 .macro{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:#0f0c14}.macro p{margin:0;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}.macro strong{display:block;font-size:22px;font-weight:500;letter-spacing:-.04em;margin:4px 0 8px}.macro strong span{font-size:12px;color:var(--muted);letter-spacing:0;font-weight:400}
 .bar{height:5px;border-radius:3px;background:#241c2c;overflow:hidden}.bar i{display:block;height:100%;border-radius:3px;transition:width .3s}
 .cal-bar{height:8px;border-radius:4px;background:#241c2c;overflow:hidden;margin:14px 0 0}.cal-bar i{display:block;height:100%;background:var(--mint);border-radius:4px}.cal-bar i.over{background:var(--error)}
-.hero-top .latest-block{min-width:280px}
+.hero-top .latest-block{min-width:280px}.goal-link{border:0;background:none;padding:0;font-size:16px;color:var(--muted);border-bottom:1px dashed #5a4a6a;line-height:1.2}.goal-link:hover{color:var(--mint);border-color:var(--mint)}
 .add-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}.add-row .quiet-button{display:inline-flex;align-items:center;gap:8px}.add-row svg{width:16px;height:16px}
 .day-nav{display:flex;align-items:center;gap:10px}.day-nav button{border:1px solid var(--line);background:transparent;border-radius:6px;width:34px;height:34px;font-size:16px;color:var(--muted)}.day-nav button:hover{color:var(--mint);border-color:var(--mint)}.day-nav strong{font-weight:550;font-size:14px;min-width:120px;text-align:center}
 .slot{margin-top:6px}.slot-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 0 4px;font-size:13px;font-weight:550}.slot-head span{font-size:12px;color:var(--muted);font-weight:400}.slot-head button{font-size:12px;padding:0}
@@ -113,14 +113,14 @@ noscript{display:block;padding:20px;color:var(--error)}
 <div class="workspace">
 <aside class="sidebar" aria-label="Your food"><div class="brand" aria-label="MEAL">MEAL<span>.</span></div><p class="nav-label">YOUR FOOD</p><nav aria-label="Summary">
 <a class="area-link" href="#meal" aria-current="page"><span class="area-name"><svg viewBox="0 0 20 26" fill="none" aria-hidden="true"><path d="M5 3v8M8 3v8M5 7h3M6.5 11v12M14 3c-2 2-2 6 0 8v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Today</span><strong id="side-today">—</strong></a>
-<a class="area-link" href="#diary"><span class="area-name"><svg viewBox="0 0 20 26" fill="none" aria-hidden="true"><circle cx="10" cy="13" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Goal</span><strong id="side-goal">—</strong></a>
+<a class="area-link" href="#meal" id="side-goal-link"><span class="area-name"><svg viewBox="0 0 20 26" fill="none" aria-hidden="true"><circle cx="10" cy="13" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Goal</span><strong id="side-goal">—</strong></a>
 </nav></aside>
 <div class="wrap">
 <header><span class="overview-label">Your overview</span><div class="header-right"><span class="status" id="connection-status">Your record</span><button class="quiet-button" id="connect-open" type="button">Sign in ↗</button><button class="quiet-button" id="add-open" type="button" hidden>Add food +</button><button class="text-button" id="sign-out" type="button" hidden>Sign out</button></div></header>
 <main>
 <aside class="quote" id="quote" aria-label="Quote of the day"><span class="quote-mark" aria-hidden="true">“</span><div class="quote-body"><p class="quote-label">Quote of the day</p><p class="quote-text" id="quote-text"></p><p class="quote-author" id="quote-author"></p></div></aside>
 <section class="hero" id="meal" aria-label="Food overview">
-<div class="hero-top"><div><h1>MEAL.</h1></div><div class="latest-block"><p class="point-metric" id="cal-label">Eaten today</p><div class="latest"><strong id="cal-total">—</strong><span id="cal-goal"></span></div><p class="latest-time" id="cal-note">Your first meal starts here.</p><div class="cal-bar"><i id="cal-fill" style="width:0"></i></div></div></div>
+<div class="hero-top"><div><h1>MEAL.</h1></div><div class="latest-block"><p class="point-metric" id="cal-label">Eaten today</p><div class="latest"><strong id="cal-total">—</strong><button class="goal-link" id="cal-goal" type="button" title="Edit goals"></button></div><p class="latest-time" id="cal-note">Your first meal starts here.</p><div class="cal-bar"><i id="cal-fill" style="width:0"></i></div></div></div>
 <div class="macros">
 <div class="macro"><p>Protein <span id="p-goal"></span></p><strong id="p-total">—<span> g</span></strong><div class="bar"><i id="p-fill" style="width:0;background:#3987e5"></i></div></div>
 <div class="macro"><p>Carbs <span id="c-goal"></span></p><strong id="c-total">—<span> g</span></strong><div class="bar"><i id="c-fill" style="width:0;background:#d95926"></i></div></div>
@@ -130,7 +130,7 @@ noscript{display:block;padding:20px;color:var(--error)}
 <button class="quiet-button" id="photo-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>Photo a meal</button>
 <button class="quiet-button" id="scan-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M7 8v8M10 8v8M13 8v8M17 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Scan barcode</button>
 <button class="quiet-button" id="manual-open" type="button">Type it in</button>
-<button class="text-button" id="goals-open" type="button">Edit goals</button>
+<button class="quiet-button" id="goals-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Edit goals</button>
 </div>
 <div class="range-row"><span class="overview-label">Showing</span><div class="seg" role="group" aria-label="Date range"><button type="button" data-range="7" aria-pressed="true">7 days</button><button type="button" data-range="30" aria-pressed="false">30 days</button><button type="button" data-range="90" aria-pressed="false">90 days</button></div></div>
 <div class="charts">

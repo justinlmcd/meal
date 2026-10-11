@@ -263,7 +263,8 @@ $('photo-log').onclick=async()=>{
 };
 
 // ---- goals ----
-$('goals-open').onclick=()=>{ if(!user)return; $('goal-cal').value=r0(goals.calories); $('goal-p').value=r0(goals.protein); $('goal-c').value=r0(goals.carbs); $('goal-f').value=r0(goals.fat); message('goals-message',''); $('goals-dialog').showModal(); $('goal-cal').focus(); };
+function openGoals(){ if(!user){ $('connection-dialog').showModal(); return; } $('goal-cal').value=r0(goals.calories); $('goal-p').value=r0(goals.protein); $('goal-c').value=r0(goals.carbs); $('goal-f').value=r0(goals.fat); message('goals-message',''); $('goals-dialog').showModal(); $('goal-cal').focus(); }
+$('goals-open').onclick=openGoals; $('cal-goal').onclick=openGoals; $('side-goal-link').onclick=e=>{ e.preventDefault(); openGoals(); };
 $('goals-close').onclick=()=>{ if(!busy)$('goals-dialog').close(); };
 $('goals-form').addEventListener('submit',async e=>{
   e.preventDefault(); if(busy||!user)return; busy=true; $('goals-save').disabled=true;
