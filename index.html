@@ -110,6 +110,17 @@ noscript{display:block;padding:20px;color:var(--error)}
 .four{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.four input{padding:10px 8px;text-align:center}.four .field>span{font-size:11px;text-align:center}
 .search-list{display:grid;gap:6px;max-height:220px;overflow:auto;margin-top:10px}.search-list button{text-align:left;border:1px solid var(--line);border-radius:8px;background:transparent;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:10px}.search-list button:hover{border-color:var(--mint)}.search-list b{font-weight:550;font-size:14px}.search-list small{display:block;color:var(--muted);font-size:11px}
 @media(max-width:520px){.macros{gap:8px}.macro{padding:12px}.macro p{flex-direction:column;gap:2px}.macro p span{font-size:11px}.macro strong{font-size:19px;margin-top:6px}.four{grid-template-columns:repeat(2,1fr)}.hero-top .latest-block{min-width:0;width:100%}}
+.coach{border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:0 0 28px;background:linear-gradient(110deg,#c9a7ff10,transparent 60%),#0f0c14}
+.coach-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}.coach-top h2{font-size:15px;font-weight:550;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:9px}.coach-top h2 svg{width:16px;height:16px;color:var(--mint)}
+.coach-empty{margin:0;font-size:14px;color:var(--muted);line-height:1.6}.coach-empty b{color:var(--ink);font-weight:550}
+.coach-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-bottom:16px}.coach-score{font-size:38px;font-weight:500;letter-spacing:-.05em;line-height:1;color:var(--mint)}.coach-score small{font-size:13px;color:var(--muted);letter-spacing:0;margin-left:2px}
+.coach-headline{margin:0;font-size:clamp(15px,1.5vw,18px);line-height:1.45;letter-spacing:-.01em}
+.coach-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}.coach-cols h3{font:11px var(--mono);letter-spacing:.17em;text-transform:uppercase;color:var(--mint);margin:0 0 8px}.coach-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.coach-cols li{font-size:13.5px;line-height:1.5;color:#d9d1e2;padding-left:14px;position:relative}.coach-cols li:before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--mint)}.coach-cols li b{display:block;font-weight:550;color:var(--ink)}.coach-cols li span{color:var(--muted)}
+.coach-next{margin:16px 0 0;padding:12px 14px;border-radius:8px;background:#c9a7ff12;font-size:14px;line-height:1.5}.coach-next span{display:block;font:11px var(--mono);letter-spacing:.17em;text-transform:uppercase;color:var(--mint);margin-bottom:4px}
+.coach-meta{margin:12px 0 0;font-size:11px;color:var(--muted)}
+.coach .spinner{display:inline-block;width:14px;height:14px;border:2px solid #c9a7ff55;border-top-color:var(--mint);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:520px){.coach{padding:16px}.coach-cols{grid-template-columns:1fr;gap:14px}.coach-score{font-size:32px}}
+
 </style>
 </head>
 <body>
@@ -130,6 +141,8 @@ noscript{display:block;padding:20px;color:var(--error)}
 <div class="macro"><p>Carbs <span id="c-goal"></span></p><strong id="c-total">—<span> g</span></strong><div class="bar"><i id="c-fill" style="width:0;background:#d95926"></i></div></div>
 <div class="macro"><p>Fat <span id="f-goal"></span></p><strong id="f-total">—<span> g</span></strong><div class="bar"><i id="f-fill" style="width:0;background:#199e70"></i></div></div>
 </div>
+<section class="coach" id="coach" aria-label="Your coach"><div class="coach-top"><h2><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9zM19 14l.7 1.6 1.6.7-1.6.7L19 18.6l-.7-1.6-1.6-.7 1.6-.7z" fill="currentColor"/></svg>Your coach</h2><button class="quiet-button" id="coach-refresh" type="button" hidden>Ask the coach ↗</button></div><div id="coach-body"></div><p class="message" id="coach-message" role="status" aria-live="polite"></p></section>
+
 <div class="add-row" id="add-row" hidden>
 <button class="quiet-button" id="photo-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>Photo a meal</button>
 <button class="quiet-button" id="scan-open" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M7 8v8M10 8v8M13 8v8M17 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Scan barcode</button>
@@ -175,6 +188,7 @@ noscript{display:block;padding:20px;color:var(--error)}
 <form id="connect-form"><label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" required></label><label class="field" style="margin-top:16px"><span>Password</span><input id="password" type="password" autocomplete="current-password" required></label><button class="primary" id="connect-submit" type="submit" style="margin-top:16px">Sign in ↗</button><p class="message" id="connect-message" role="status"></p></form></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
 <script src="/quote-of-day.js"></script>
+<script src="/coach.js"></script>
 <script src="/meal.js"></script>
 </body>
 </html>

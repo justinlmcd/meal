@@ -49,6 +49,7 @@ function setUser(next){
   $('connection-status').textContent=user?'Connected':'Your record'; $('connection-status').classList.toggle('connected',!!user);
   if(!user){ entries=[]; foods=[]; render(); $('diary-list').innerHTML='<p class="row-empty">Sign in to see your diary.</p>'; $('foods-list').innerHTML='<p class="row-empty">Sign in to see your saved foods.</p>'; for(const id of ['entry-dialog','scan-dialog','photo-dialog','goals-dialog']) $(id).close(); }
   else load();
+  window.coachUser?.(user?.id);
 }
 $('connect-open').onclick=()=>{ $('connection-dialog').showModal(); $('email').focus(); };
 $('connect-close').onclick=()=>{ if(!busy)$('connection-dialog').close(); };
@@ -288,6 +289,22 @@ document.addEventListener('click',async e=>{
 });
 document.querySelectorAll('[data-range]').forEach(b=>b.onclick=()=>{ range=b.dataset.range; document.querySelectorAll('[data-range]').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); render(); });
 
+
+// What the coach reads: your goals, the last 14 days day by day, and what you eat most.
+function coachSummary(){
+  const t=today(); const L=[];
+  L.push(`Daily goals: ${r0(goals.calories)} kcal, protein ${r0(goals.protein)} g, carbs ${r0(goals.carbs)} g, fat ${r0(goals.fat)} g.`);
+  const dayLines=[]; let logged=0, over=0, kc=0, pr=0;
+  for(let i=13;i>=0;i--){ const d=addDays(t,-i), rows=onDay(d); if(!rows.length){ dayLines.push(`${d}: nothing logged`); continue; } logged++; const c=sum(rows,'calories'), p=sum(rows,'protein'); kc+=c; pr+=p; if(c>goals.calories) over++;
+    dayLines.push(`${d}: ${r0(c)} kcal, P ${r0(p)} C ${r0(sum(rows,'carbs'))} F ${r0(sum(rows,'fat'))} g, ${rows.length} items (${SLOTS.filter(([k])=>rows.some(r=>r.slot===k)).map(([,l])=>l.toLowerCase()).join(', ')})`); }
+  L.push(`Last 14 days: ${logged} days logged, average ${logged?r0(kc/logged):0} kcal and ${logged?r0(pr/logged):0} g protein on logged days, ${over} days over the calorie goal.`);
+  L.push(dayLines.join('\n'));
+  const m=new Map(); for(const r of entries.filter(r=>r.eaten_on>=addDays(t,-29))){ const k=r.name.toLowerCase(); m.set(k,{n:(m.get(k)?.n||0)+1,c:(m.get(k)?.c||0)+r.calories,name:r.name}); }
+  L.push('Most logged foods, last 30 days: '+[...m.values()].sort((a,b)=>b.n-a.n).slice(0,10).map(v=>`${v.name} ${v.n}× (${r0(v.c)} kcal total)`).join('; ')+'.');
+  const src={}; for(const r of entries) src[r.source]=(src[r.source]||0)+1; L.push('How entries were logged: '+Object.entries(src).map(([k,v])=>`${k} ${v}`).join(', ')+'.');
+  return L.join('\n');
+}
+window.coach={app:'meal',userId:async()=>user?.id||null,session:async()=>{ try{ const db=await connect(); const {data:{session}}=await db.auth.getSession(); return session?.access_token||null; }catch{ return null; } },summary:coachSummary};
 // Reconnect a saved session, if any.
 render();
 connect().catch(()=>{});

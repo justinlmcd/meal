@@ -1,4 +1,11 @@
 {
   "cleanUrls": true,
-  "functions": { "api/analyze.mjs": { "maxDuration": 60 } }
+  "functions": {
+    "api/analyze.mjs": {
+      "maxDuration": 60
+    },
+    "api/coach.mjs": {
+      "maxDuration": 60
+    }
+  }
 }
