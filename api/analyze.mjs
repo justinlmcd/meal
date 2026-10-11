@@ -59,7 +59,9 @@ export default async function handler(request, response) {
   if (!data || data.length > 6_000_000) return response.status(400).end(JSON.stringify({ error: 'Send one image under 4 MB.' }));
   const hint = typeof body.hint === 'string' ? body.hint.trim().slice(0, 200) : '';
 
-  const client = new Anthropic();
+  // An organization-level key must name a workspace; a key created inside a workspace does not.
+  const workspace = (process.env.ANTHROPIC_WORKSPACE_ID || '').trim();
+  const client = new Anthropic(workspace ? { defaultHeaders: { 'anthropic-workspace-id': workspace } } : {});
   try {
     const result = await client.beta.messages.create({
       model: 'claude-opus-5-5',
