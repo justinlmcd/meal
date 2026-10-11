@@ -80,8 +80,10 @@ export default async function handler(request, response) {
     const parsed = JSON.parse(text);
     return response.status(200).end(JSON.stringify(parsed));
   } catch (error) {
-    const status = error?.status === 429 ? 429 : 502;
-    const msg = status === 429 ? 'The photo service is busy. Try again in a moment.' : 'Could not analyze the photo. Try again.';
+    console.error('analyze error', error?.status, error?.message);
+    const status = error?.status === 429 ? 429 : error?.status === 401 ? 401 : 502;
+    const detail = (error?.message || String(error)).slice(0, 300);
+    const msg = status === 429 ? 'The photo service is busy. Try again in a moment.' : status === 401 ? 'The ANTHROPIC_API_KEY in Vercel was rejected. Check the key and redeploy.' : `Could not analyze the photo: ${detail}`;
     return response.status(status).end(JSON.stringify({ error: msg }));
   }
 }
