@@ -10,7 +10,6 @@ const SCHEMA = {
     notes: { type: 'string', description: 'One sentence on what was assumed about portion sizes, or empty.' },
     items: {
       type: 'array',
-      maxItems: 12,
       items: {
         type: 'object',
         additionalProperties: false,
