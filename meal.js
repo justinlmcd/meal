@@ -44,7 +44,7 @@ function setUser(next){
   if(next?.id===user?.id)return;
   user=next; loadId++;
   $('connect-open').hidden=!!user;
-  for(const id of ['sign-out','add-open','add-row']) $(id).hidden=!user;
+  for(const id of ['sign-out','add-open','add-row','csv-diary']) $(id).hidden=!user;
   for(const id of ['entry-fields','goals-fields']) $(id).disabled=!user;
   $('connection-status').textContent=user?'Connected':'Your record'; $('connection-status').classList.toggle('connected',!!user);
   if(!user){ entries=[]; foods=[]; render(); $('diary-list').innerHTML='<p class="row-empty">Sign in to see your diary.</p>'; $('foods-list').innerHTML='<p class="row-empty">Sign in to see your saved foods.</p>'; for(const id of ['entry-dialog','scan-dialog','photo-dialog','goals-dialog']) $(id).close(); }
@@ -121,7 +121,7 @@ function lineHover(e){
   tip.innerHTML=`${esc(longDate(best.day))}<strong>${r0(best.total)} kcal</strong>P ${r0(sum(rows,'protein'))} · C ${r0(sum(rows,'carbs'))} · F ${r0(sum(rows,'fat'))} g`;
   tip.classList.remove('hidden'); tip.style.left=(r.left-card.left+best.px/700*r.width)+'px'; tip.style.top=(r.top-card.top+best.py/260*r.height)+'px';
 }
-$('line-plot').addEventListener('pointermove',lineHover); $('line-plot').addEventListener('pointerleave',()=>{ $('line-tip').classList.add('hidden'); const f=$('line-focus'); if(f)f.innerHTML=''; });
+$('line-plot').addEventListener('pointermove',lineHover); tapToRead($('line-plot'),lineHover,()=>{ $('line-tip').classList.add('hidden'); const f=$('line-focus'); if(f)f.innerHTML=''; });
 
 // ---- donut: where the calories came from, in this range ----
 function drawDonut(){
@@ -135,8 +135,9 @@ function drawDonut(){
   $('legend').innerHTML=segs.map((s,i)=>`<li data-seg="${i}"><i style="background:${s.color}"></i><span>${s.name}</span><b>${Math.round(s.pct*100)}%</b></li>`).join('');
   const tip=$('pie-tip'), card=$('pie-card');
   svg.querySelectorAll('[data-seg]').forEach(g=>{ const s=segs[g.dataset.seg];
-    g.addEventListener('pointermove',e=>{ const cr=card.getBoundingClientRect(); tip.innerHTML=`${s.name}<strong>${r0(s.cal)} kcal · ${Math.round(s.pct*100)}%</strong>`; tip.classList.remove('hidden'); tip.style.left=(e.clientX-cr.left)+'px'; tip.style.top=(e.clientY-cr.top)+'px'; $('legend').querySelectorAll('li').forEach(li=>li.classList.toggle('dim',li.dataset.seg!==g.dataset.seg)); });
-    g.addEventListener('pointerleave',()=>{ tip.classList.add('hidden'); $('legend').querySelectorAll('li').forEach(li=>li.classList.remove('dim')); });
+    const show=e=>{ const cr=card.getBoundingClientRect(); tip.innerHTML=`${s.name}<strong>${r0(s.cal)} kcal · ${Math.round(s.pct*100)}%</strong>`; tip.classList.remove('hidden'); tip.style.left=(e.clientX-cr.left)+'px'; tip.style.top=(e.clientY-cr.top)+'px'; $('legend').querySelectorAll('li').forEach(li=>li.classList.toggle('dim',li.dataset.seg!==g.dataset.seg)); };
+    const hide=()=>{ tip.classList.add('hidden'); $('legend').querySelectorAll('li').forEach(li=>li.classList.remove('dim')); };
+    g.addEventListener('pointermove',show); tapToRead(g,show,hide,'donut');
   });
 }
 
@@ -157,6 +158,26 @@ function renderFoods(){
 }
 $('day-prev').onclick=()=>{ day=addDays(day,-1); renderDiary(); }; $('day-next').onclick=()=>{ if(day<today()){ day=addDays(day,1); renderDiary(); } };
 
+
+// Charts answer a tap as well as a hover: a touch pins the tooltip until you tap elsewhere.
+// Marks in the same group share one tooltip, so moving between them swaps it instead of hiding it.
+let lastPinned=null,lastGroup='';
+function tapToRead(el,show,hide,group=''){
+  let pinned=false;
+  el.addEventListener('pointerdown',e=>{ show(e); pinned=e.pointerType!=='mouse'; if(pinned){ lastPinned=el; lastGroup=group; } });
+  el.addEventListener('pointerleave',()=>{ if(!pinned) hide(); });
+  document.addEventListener('pointerdown',e=>{ if(pinned&&!el.contains(e.target)){ pinned=false; if(!(group&&lastGroup===group&&lastPinned!==el&&lastPinned?.contains(e.target))) hide(); } });
+}
+
+// Download, or on a phone share, a CSV of your own rows.
+async function exportCsv(name,header,rows){
+  const q=v=>{ const s=String(v??''); return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const csv=[header,...rows].map(r=>r.map(q).join(',')).join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  try{ const file=new File([blob],name,{type:'text/csv'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:name}); return; } }catch(err){ if(err?.name==='AbortError') return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
+}
+$('csv-diary').onclick=()=>exportCsv('meal-diary.csv',['date','meal','name','brand','portion','calories','protein_g','carbs_g','fat_g','source'],entries.map(r=>[r.eaten_on,r.slot,r.name,r.brand,r.portion,r.calories,r.protein,r.carbs,r.fat,r.source]));
 // ---- manual / saved-food entry ----
 function num(s,label){ const v=Number(String(s).replace(',','.')); if(!Number.isFinite(v)||v<0) throw new Error(`Enter ${label} as a number.`); return Math.round(v*10)/10; }
 function openEntry(pre){
