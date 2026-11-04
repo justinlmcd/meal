@@ -7,7 +7,8 @@ const SLOTS=[['breakfast','Breakfast'],['lunch','Lunch'],['dinner','Dinner'],['s
 const MACRO_COLORS={protein:'#3987e5',carbs:'#d95926',fat:'#199e70'};
 const PAGE=1000;
 const isoDay=d=>{ const x=new Date(d); return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10); };
-const today=()=>isoDay(new Date());
+// Today in your time zone, with your day running until the hour you chose in YOU's settings.
+const today=()=>window.youSettings?window.youSettings.dayOf(Date.now()):isoDay(new Date());
 const parseDay=s=>{ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
 const addDays=(s,n)=>isoDay(new Date(parseDay(s).getTime()+n*86400000+3600000*6));
 const shortDate=s=>parseDay(s).toLocaleDateString([], {month:'short',day:'numeric'});
@@ -22,7 +23,7 @@ let entries=[],foods=[],goals={calories:2000,protein:150,carbs:200,fat:65},range
 function message(id,text,kind=''){ $(id).textContent=text; $(id).className='message'+(kind?' '+kind:''); }
 
 // ---- connection: the two public Supabase settings come from /api/config ----
-function projectConfig(v){ const url=typeof v?.url==='string'?v.url.trim().replace(/\/$/,''):'', key=typeof v?.key==='string'?v.key.trim():''; if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) throw new Error('This page needs its Supabase connection set up in Vercel.'); if(typeof v?.home==='string'&&/^https?:\/\//.test(v.home)) document.getElementById('home-link').href=v.home; return {url,key}; }
+function projectConfig(v){ const url=typeof v?.url==='string'?v.url.trim().replace(/\/$/,''):'', key=typeof v?.key==='string'?v.key.trim():''; if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) throw new Error('This page needs its Supabase connection set up in Vercel.'); if(typeof v?.home==='string'&&/^https?:\/\//.test(v.home)) document.getElementById('home-link').href=v.home; { const sl=document.getElementById('settings-link'); if(sl) sl.href=v.home.replace(/\/+$/,'')+'/#settings'; } return {url,key}; }
 // The house button goes to the YOU hub. Its address comes from URL_HOME in Vercel.
 (function(){ const a=document.getElementById('home-link'); if(!a)return; a.addEventListener('click',e=>{ if(a.getAttribute('href')==='#'){ e.preventDefault(); alert('Set URL_HOME in this project\'s Vercel environment variables to your YOU hub address, then redeploy.'); } }); })();
 async function connect(){
@@ -45,6 +46,7 @@ function makeClient(config){
 function setUser(next){
   if(next?.id===user?.id)return;
   user=next; loadId++;
+  if(user&&client) window.youSettings?.sync(client);
   $('connect-open').hidden=!!user;
   for(const id of ['sign-out','add-open','add-row','csv-diary']) $(id).hidden=!user;
   for(const id of ['entry-fields','goals-fields']) $(id).disabled=!user;
@@ -331,4 +333,5 @@ window.coach={app:'meal',userId:async()=>user?.id||null,session:async()=>{ try{ 
 // Reconnect a saved session, if any.
 render();
 connect().catch(()=>{});
+window.youSettings?.on((v,keys)=>{ if(user&&keys.some(k=>k==='timeZone'||k==='dayEnds')) load(); });
 })();
